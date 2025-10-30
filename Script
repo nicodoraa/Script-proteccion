@@ -1,0 +1,23 @@
+import re
+
+ALLOWED_USERS = {"maria.t","juan.perez","sofia.admin","dev_ops","ops_backup",
+                 "carlos.g","laura.m","pablo.r","ana.santos","ricardo_v",
+                 "valeria","fernando99","gabriela.k","soledad","martin.c",
+                 "luis_dev","julieta","diego.admin","andrea_ops","nico.tech",
+                 "alejandro","paula","hernan","ignacio","micaela"}
+
+def validar_input(texto):
+    return bool(re.match(r'^[a-zA-Z0-9@._\- ]+$', texto))
+
+def main():
+    usuario = input("Usuario: ").strip()
+    if usuario not in ALLOWED_USERS:
+        print("Acceso denegado. Usuario no autorizado."); return
+    valor = input("Ingrese un valor seguro: ").strip()
+    if validar_input(valor):
+        print(f"[OK] Usuario {usuario} - Procesando: {valor}")
+    else:
+        print("Entrada inválida. Posible intento de inyección detectado.")
+
+if __name__ == "__main__":
+    main()
