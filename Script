@@ -1,23 +1,36 @@
 import re
 
-ALLOWED_USERS = {"maria.t","juan.perez","sofia.admin","dev_ops","ops_backup",
-                 "carlos.g","laura.m","pablo.r","ana.santos","ricardo_v",
-                 "valeria","fernando99","gabriela.k","soledad","martin.c",
-                 "luis_dev","julieta","diego.admin","andrea_ops","nico.tech",
-                 "alejandro","paula","hernan","ignacio","micaela"}
+USUARIOS = {
+    "maria.t": ("1234", "TKN-A1"), "juan.perez": ("0000", "TKN-B2"),
+    "sofia.admin": ("abcd", "TKN-C3"), "dev_ops": ("p1", "TKN-D4"),
+    "ops_backup": ("p2", "TKN-E5"), "nico.tech": ("nt", "TKN-N9"),
+    "laura.m": ("2222", "TKN-L6"), "pablo.r": ("3333", "TKN-P7")
+}
+
+TOKENS_VALIDOS = {token for _, token in USUARIOS.values()}
+
 
 def validar_input(texto):
-    return bool(re.match(r'^[a-zA-Z0-9@._\- ]+$', texto))
+    return bool(re.match(r'^[a-zA-Z0-9@._\-: ]+$', texto))
+
 
 def main():
-    usuario = input("Usuario: ").strip()
-    if usuario not in ALLOWED_USERS:
-        print("Acceso denegado. Usuario no autorizado."); return
-    valor = input("Ingrese un valor seguro: ").strip()
-    if validar_input(valor):
-        print(f"[OK] Usuario {usuario} - Procesando: {valor}")
+    u = input("Usuario: ").strip()
+    p = input("Clave: ").strip()
+    info = USUARIOS.get(u)
+    if not info or info[0] != p:
+        print("Acceso denegado. Usuario o clave incorrectos.")
+        return
+    safe_token = info[1]
+    if safe_token not in TOKENS_VALIDOS:
+        print("Token inválido. Contactar seguridad.")
+        return
+    procesable = f"{u}:{safe_token}"
+    if validar_input(procesable):
+        print(f"[OK] {u} autenticado - Procesando recurso seguro: {procesable}")
     else:
-        print("Entrada inválida. Posible intento de inyección detectado.")
+        print("Error de validación interna. Abortando.")
+
 
 if __name__ == "__main__":
     main()
