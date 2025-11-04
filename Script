@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import messagebox
 import re
 
 USUARIOS = {
@@ -14,23 +16,42 @@ def validar_input(texto):
     return bool(re.match(r'^[a-zA-Z0-9@._\-: ]+$', texto))
 
 
-def main():
-    u = input("Usuario: ").strip()
-    p = input("Clave: ").strip()
-    info = USUARIOS.get(u)
-    if not info or info[0] != p:
-        print("Acceso denegado. Usuario o clave incorrectos.")
+def autenticar():
+    usuario = entrada_usuario.get().strip()
+    clave = entrada_clave.get().strip()
+    info = USUARIOS.get(usuario)
+
+    if not info or info[0] != clave:
+        messagebox.showerror("Acceso denegado", "Usuario o clave incorrectos.")
         return
+
     safe_token = info[1]
     if safe_token not in TOKENS_VALIDOS:
-        print("Token inválido. Contactar seguridad.")
+        messagebox.showwarning(
+            "Token inválido", "Contactar al área de seguridad.")
         return
-    procesable = f"{u}:{safe_token}"
+
+    procesable = f"{usuario}:{safe_token}"
     if validar_input(procesable):
-        print(f"[OK] {u} autenticado - Procesando recurso seguro: {procesable}")
+        messagebox.showinfo(
+            "Acceso concedido", f"[OK] {usuario} autenticado.\nAcceso concedido")
     else:
-        print("Error de validación interna. Abortando.")
+        messagebox.showerror(
+            "Error", "Error de validación interna. Abortando.")
 
 
-if __name__ == "__main__":
-    main()
+ventana = tk.Tk()
+ventana.title("Sistema de autenticación")
+ventana.geometry("320x200")
+
+tk.Label(ventana, text="Usuario:").pack(pady=(20, 5))
+entrada_usuario = tk.Entry(ventana, width=30)
+entrada_usuario.pack()
+
+tk.Label(ventana, text="Clave:").pack(pady=(10, 5))
+entrada_clave = tk.Entry(ventana, width=30, show="*")
+entrada_clave.pack()
+
+tk.Button(ventana, text="Iniciar sesión", command=autenticar).pack(pady=20)
+
+ventana.mainloop()
